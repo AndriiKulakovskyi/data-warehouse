@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +35,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 interface SignUpFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (userData: any) => void;
   onLoginClick?: () => void;
 }
 
@@ -42,6 +43,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   onSuccess = () => {},
   onLoginClick = () => {},
 }) => {
+  const { signup } = useAuth();
   const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -58,17 +60,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   const onSubmit = async (values: FormValues) => {
     console.log("Sign up form submitted:", values);
     try {
-      // In a real app, you would register with a backend here
-      // For now, we'll simulate a successful registration
-      // This would be replaced with actual registration logic
-      // await authService.register(values);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Redirect to home page after successful registration
+      await signup(values);
       navigate("/");
-      onSuccess();
+      onSuccess(values);
     } catch (error) {
       console.error("Registration failed:", error);
       // Handle registration error

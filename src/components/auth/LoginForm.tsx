@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +25,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface LoginFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (email: string, password: string) => void;
   onSignUpClick?: () => void;
 }
 
@@ -32,6 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   onSuccess = () => {},
   onSignUpClick = () => {},
 }) => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -45,17 +47,9 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const onSubmit = async (values: FormValues) => {
     console.log("Login form submitted:", values);
     try {
-      // In a real app, you would authenticate with a backend here
-      // For now, we'll simulate a successful login
-      // This would be replaced with actual authentication logic
-      // await authService.login(values.email, values.password);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Redirect to home page after successful login
+      await login(values.email, values.password);
       navigate("/");
-      onSuccess();
+      onSuccess(values.email, values.password);
     } catch (error) {
       console.error("Login failed:", error);
       // Handle login error

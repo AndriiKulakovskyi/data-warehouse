@@ -4,12 +4,16 @@ import DatasetCatalog from "./datasets/DatasetCatalog";
 import DatasetDetailModal from "./datasets/DatasetDetailModal";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, X } from "lucide-react";
+import Navbar from "./layout/Navbar";
+import { useAuth } from "./auth/AuthContext";
 
 interface HomeProps {
   username?: string;
 }
 
-const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
+const Home: React.FC<HomeProps> = ({ username }) => {
+  const { user } = useAuth();
+  const displayName = username || user?.username || "Researcher";
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedDataset, setSelectedDataset] = useState<string | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -100,64 +104,15 @@ const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const onSearch = (query: string) => {
+    console.log("Search query:", query);
+    // Here you would typically search datasets based on the query
+  };
+
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Top Navigation Bar */}
-      <header className="h-16 border-b flex items-center justify-between px-4 bg-white z-10">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden mr-2"
-            onClick={toggleMobileMenu}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
-          <div className="font-bold text-xl">Clinical Dataset Hub</div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const input = e.currentTarget.querySelector("input");
-                if (input) {
-                  onSearch(input.value);
-                }
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Search all datasets..."
-                className="pl-10 pr-4 py-2 border rounded-full w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </form>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden md:block text-sm">Welcome, {username}</div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => (window.location.href = "/account")}
-              className="text-sm font-medium"
-            >
-              My Account
-            </Button>
-            <div
-              className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white cursor-pointer"
-              onClick={() => (window.location.href = "/account")}
-            >
-              {username.charAt(0)}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar onSearch={onSearch} />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Mobile Sidebar */}
@@ -195,6 +150,7 @@ const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
             </div>
             <div className="text-sm text-gray-500">
               Showing datasets for clinical psychiatry research
+              {user && <span className="ml-2">| Welcome, {displayName}</span>}
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
   Bell,
@@ -7,7 +7,9 @@ import {
   LogOut,
   Settings,
   ChevronDown,
+  Shield,
 } from "lucide-react";
+import { useAuth } from "../auth/AuthContext";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -21,20 +23,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import AuthModal from "../auth/AuthModal";
 
 interface NavbarProps {
-  username?: string;
-  avatarUrl?: string;
-  isAuthenticated?: boolean;
-  onLogout?: () => void;
   onSearch?: (query: string) => void;
 }
 
 const Navbar = ({
-  username = "John Researcher",
-  avatarUrl = "https://api.dicebear.com/7.x/avataaars/svg?seed=researcher",
-  isAuthenticated = true,
-  onLogout = () => console.log("Logout clicked"),
   onSearch = (query) => console.log("Search query:", query),
 }: NavbarProps) => {
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const username = user?.username || "Guest";
+  const avatarUrl =
+    user?.avatarUrl ||
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
   const [searchQuery, setSearchQuery] = useState("");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
@@ -56,6 +57,19 @@ const Navbar = ({
 
   const handleCloseAuthModal = () => {
     setShowAuthModal(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/account");
+  };
+
+  const handleAdminClick = () => {
+    navigate("/admin");
   };
 
   return (
@@ -106,16 +120,18 @@ const Navbar = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleProfileClick}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>My Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
+                {user?.isAdmin && (
+                  <DropdownMenuItem onClick={handleAdminClick}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Dashboard</span>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onLogout}>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>
