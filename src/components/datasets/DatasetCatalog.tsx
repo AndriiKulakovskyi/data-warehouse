@@ -49,7 +49,7 @@ const DatasetCatalog = ({
       description:
         "A comprehensive collection of MRI and fMRI scans from patients with major depressive disorder and healthy controls.",
       imageUrl:
-        "https://images.unsplash.com/photo-1559757175-7cb036e0d465?w=400&q=80",
+        "https://media.istockphoto.com/id/1173351472/photo/human-brain.jpg?s=612x612&w=0&k=20&c=oyScKiElzYs1lotxyxXQpSsyQXlGJby7qB-VXHp0g1k=",
       dataTypes: ["MRI", "fMRI", "Questionnaires"],
       isAvailable: true,
       publicationDate: "2023-05-15",

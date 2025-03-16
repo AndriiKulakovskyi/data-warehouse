@@ -112,7 +112,18 @@ const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden md:block text-sm">Welcome, {username}</div>
-            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => (window.location.href = "/account")}
+              className="text-sm font-medium"
+            >
+              My Account
+            </Button>
+            <div
+              className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white cursor-pointer"
+              onClick={() => (window.location.href = "/account")}
+            >
               {username.charAt(0)}
             </div>
           </div>

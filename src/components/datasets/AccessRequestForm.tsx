@@ -28,26 +28,18 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   institution: z.string().min(2, { message: "Institution name is required." }),
-  purpose: z
-    .string()
-    .min(10, {
-      message: "Please provide a detailed purpose for accessing this dataset.",
-    }),
-  projectDescription: z
-    .string()
-    .min(20, {
-      message: "Please provide a more detailed project description.",
-    }),
-  agreeToDua: z
-    .boolean()
-    .refine((val) => val === true, {
-      message: "You must agree to the Data Usage Agreement.",
-    }),
-  agreeToTerms: z
-    .boolean()
-    .refine((val) => val === true, {
-      message: "You must agree to the terms and conditions.",
-    }),
+  purpose: z.string().min(10, {
+    message: "Please provide a detailed purpose for accessing this dataset.",
+  }),
+  projectDescription: z.string().min(20, {
+    message: "Please provide a more detailed project description.",
+  }),
+  agreeToDua: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the Data Usage Agreement.",
+  }),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms and conditions.",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -81,7 +73,14 @@ const AccessRequestForm = ({
   });
 
   const handleSubmit = (values: FormValues) => {
-    // Add the datasetId to the form values
+    // Add the datasetId to the form values and submit the request
+    console.log(`Submitting access request for dataset ${datasetId}:`, values);
+
+    // Here you would typically send the request to your backend API
+    // For example: await fetch('/api/access-requests', { method: 'POST', body: JSON.stringify({...values, datasetId}) })
+
+    // Show success message or handle errors
+    // For now, we'll just call the onSubmit prop and close the dialog
     onSubmit({ ...values, datasetId });
     onClose();
   };
