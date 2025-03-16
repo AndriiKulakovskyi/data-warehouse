@@ -209,8 +209,8 @@ const DatasetCatalog = ({
       {/* Dataset grid */}
       <div
         className={
-          ` ${viewMode === "" ? " grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : " gap-4"} ` +
-          " flex flex-row justify-center items-center"
+          ` ${viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"} ` +
+          " justify-center items-start"
         }
       >
         {datasets.map((dataset) => (
