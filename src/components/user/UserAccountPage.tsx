@@ -31,7 +31,9 @@ import {
   Lock,
   Bell,
   LogOut,
+  Home,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UserAccountPageProps {
   isAdmin?: boolean;
@@ -64,6 +66,7 @@ const UserAccountPage: React.FC<UserAccountPageProps> = ({
   email = "john.researcher@example.edu",
 }) => {
   const [activeTab, setActiveTab] = useState("profile");
+  const navigate = useNavigate();
 
   // Profile form
   const profileForm = useForm<ProfileFormValues>({
@@ -170,6 +173,17 @@ const UserAccountPage: React.FC<UserAccountPageProps> = ({
     // Here you would typically send an API request to request more information
   };
 
+  const handleSignOut = () => {
+    console.log("User signed out");
+    // Here you would typically clear auth tokens/session
+    // For now we'll just redirect to home page
+    navigate("/");
+  };
+
+  const handleGoToMainPage = () => {
+    navigate("/");
+  };
+
   return (
     <div className="container mx-auto py-8 bg-white">
       <div className="flex flex-col md:flex-row gap-8">
@@ -233,10 +247,19 @@ const UserAccountPage: React.FC<UserAccountPageProps> = ({
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={handleGoToMainPage}
+                >
+                  <Home className="mr-2 h-4 w-4" />
+                  Main Page
+                </Button>
                 <Separator className="my-4" />
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
+                  onClick={handleSignOut}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
