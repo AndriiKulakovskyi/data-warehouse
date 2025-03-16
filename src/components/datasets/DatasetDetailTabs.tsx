@@ -153,7 +153,6 @@ const DatasetDetailTabs: React.FC<DatasetDetailTabsProps> = ({
               </div>
 
               <div className="mt-6">
-                <Button className="mr-2">Request Access</Button>
                 <Button variant="outline">Download Metadata</Button>
               </div>
             </CardContent>

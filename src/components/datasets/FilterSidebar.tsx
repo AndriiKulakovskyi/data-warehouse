@@ -313,7 +313,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       </Accordion>
 
       <div className="mt-6">
-        <Button className="w-full">Apply Filters</Button>
+        <Button className="w-full" onClick={() => onFilterChange(filters)}>
+          Apply Filters
+        </Button>
       </div>
     </div>
   );

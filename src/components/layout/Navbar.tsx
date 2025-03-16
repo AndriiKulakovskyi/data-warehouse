@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import AuthModal from "../auth/AuthModal";
 
 interface NavbarProps {
   username?: string;
@@ -34,11 +35,27 @@ const Navbar = ({
   onLogout = () => console.log("Logout clicked"),
   onSearch = (query) => console.log("Search query:", query),
 }: NavbarProps) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
+  };
+
+  const handleSignIn = () => {
+    setAuthMode("login");
+    setShowAuthModal(true);
+  };
+
+  const handleRegister = () => {
+    setAuthMode("signup");
+    setShowAuthModal(true);
+  };
+
+  const handleCloseAuthModal = () => {
+    setShowAuthModal(false);
   };
 
   return (
@@ -59,7 +76,13 @@ const Navbar = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <button
+            type="submit"
+            className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground"
+            aria-label="Search"
+          >
+            <Search className="h-4 w-4" />
+          </button>
         </form>
       </div>
 
@@ -101,11 +124,19 @@ const Navbar = ({
           </>
         ) : (
           <>
-            <Button variant="ghost">Sign In</Button>
-            <Button>Register</Button>
+            <Button variant="ghost" onClick={handleSignIn}>
+              Sign In
+            </Button>
+            <Button onClick={handleRegister}>Register</Button>
           </>
         )}
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={handleCloseAuthModal}
+        initialMode={authMode}
+      />
     </nav>
   );
 };

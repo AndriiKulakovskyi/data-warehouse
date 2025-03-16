@@ -70,7 +70,26 @@ const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
 
   const handleFilterChange = (filters: any) => {
     console.log("Filters applied:", filters);
-    // Here you would typically fetch filtered datasets
+    // In a real app, you would fetch filtered datasets from the backend
+    // For now, we'll just log the filters
+
+    // Example of how you might filter datasets in a real implementation:
+    // const filteredDatasets = allDatasets.filter(dataset => {
+    //   // Filter by data types
+    //   if (Object.values(filters.dataTypes).some(value => value === true)) {
+    //     const selectedTypes = Object.entries(filters.dataTypes)
+    //       .filter(([_, selected]) => selected)
+    //       .map(([type]) => type);
+    //     if (!dataset.dataTypes.some(type => selectedTypes.includes(type.toLowerCase()))) {
+    //       return false;
+    //     }
+    //   }
+    //
+    //   // Filter by availability
+    //   // ... and so on
+    //
+    //   return true;
+    // });
   };
 
   const toggleSidebar = () => {
@@ -104,11 +123,21 @@ const Home: React.FC<HomeProps> = ({ username = "Researcher" }) => {
         <div className="flex items-center gap-4">
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search all datasets..."
-              className="pl-10 pr-4 py-2 border rounded-full w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const input = e.currentTarget.querySelector("input");
+                if (input) {
+                  onSearch(input.value);
+                }
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Search all datasets..."
+                className="pl-10 pr-4 py-2 border rounded-full w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </form>
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden md:block text-sm">Welcome, {username}</div>
