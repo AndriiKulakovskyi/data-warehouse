@@ -197,7 +197,6 @@ const DatasetCatalog = ({
           </Button>
         </div>
       </div>
-
       {/* Results count */}
       <div className="mb-4 text-sm text-gray-500">
         Showing{" "}
@@ -207,12 +206,12 @@ const DatasetCatalog = ({
         )}{" "}
         of {totalDatasets} datasets
       </div>
-
       {/* Dataset grid */}
       <div
-        className={`
-        ${viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}
-      `}
+        className={
+          ` ${viewMode === "" ? " grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : " gap-4"} ` +
+          " flex flex-row justify-center items-center"
+        }
       >
         {datasets.map((dataset) => (
           <div
@@ -234,7 +233,6 @@ const DatasetCatalog = ({
           </div>
         ))}
       </div>
-
       {/* Empty state */}
       {datasets.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -257,7 +255,6 @@ const DatasetCatalog = ({
           </Button>
         </div>
       )}
-
       {/* Pagination */}
       {datasets.length > 0 && (
         <div className="mt-8 flex justify-center">
