@@ -26,7 +26,11 @@ import {
   Database,
   FileText,
   AlertTriangle,
+  Plus,
 } from "lucide-react";
+import AddDatasetForm, {
+  DatasetFormData,
+} from "@/components/datasets/AddDatasetForm";
 
 interface AdminDashboardProps {
   username?: string;
@@ -36,6 +40,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   username = "Admin User",
 }) => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [showAddDatasetForm, setShowAddDatasetForm] = useState(false);
 
   // Mock data
   const stats = {
@@ -276,6 +281,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     // Here you would typically send an API request to deny the access request
   };
 
+  const handleAddDataset = (data: DatasetFormData) => {
+    console.log("Adding new dataset:", data);
+    // Here you would typically send an API request to add the dataset
+    // For now, we'll just hide the form and show a success message
+    setShowAddDatasetForm(false);
+    // In a real application, you would update the datasets list
+  };
+
   return (
     <div className="container mx-auto py-8 bg-white">
       <div className="flex justify-between items-center mb-8">
@@ -491,53 +504,69 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </TabsContent>
 
         <TabsContent value="datasets" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Dataset Management</CardTitle>
-              <CardDescription>
-                View and manage available datasets
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-center mb-4">
-                <Input placeholder="Search datasets..." className="max-w-sm" />
-                <Button>Add New Dataset</Button>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Dataset Name</TableHead>
-                    <TableHead>Owner</TableHead>
-                    <TableHead>Upload Date</TableHead>
-                    <TableHead>Access Count</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentDatasets.map((dataset) => (
-                    <TableRow key={dataset.id}>
-                      <TableCell className="font-medium">
-                        {dataset.name}
-                      </TableCell>
-                      <TableCell>{dataset.owner}</TableCell>
-                      <TableCell>{dataset.uploadDate}</TableCell>
-                      <TableCell>{dataset.accessCount}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
-                            View
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                        </div>
-                      </TableCell>
+          {showAddDatasetForm ? (
+            <AddDatasetForm
+              onSubmit={handleAddDataset}
+              onCancel={() => setShowAddDatasetForm(false)}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Dataset Management</CardTitle>
+                <CardDescription>
+                  View and manage available datasets
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between items-center mb-4">
+                  <Input
+                    placeholder="Search datasets..."
+                    className="max-w-sm"
+                  />
+                  <Button
+                    onClick={() => setShowAddDatasetForm(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add New Dataset
+                  </Button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Dataset Name</TableHead>
+                      <TableHead>Owner</TableHead>
+                      <TableHead>Upload Date</TableHead>
+                      <TableHead>Access Count</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {recentDatasets.map((dataset) => (
+                      <TableRow key={dataset.id}>
+                        <TableCell className="font-medium">
+                          {dataset.name}
+                        </TableCell>
+                        <TableCell>{dataset.owner}</TableCell>
+                        <TableCell>{dataset.uploadDate}</TableCell>
+                        <TableCell>{dataset.accessCount}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm">
+                              View
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              Edit
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="requests" className="space-y-4">
