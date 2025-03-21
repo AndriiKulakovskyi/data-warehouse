@@ -75,24 +75,63 @@ const AddDatasetForm: React.FC<AddDatasetFormProps> = ({
     setFormData((prev) => ({ ...prev, [name]: checked }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.(formData);
-    // Reset form after submission
-    setFormData({
-      name: "",
-      description: "",
-      institution: "",
-      dataType: "mixed",
-      accessType: "collaboration",
-      collaborationType: "academic",
-      contactEmail: "",
-      sampleSize: "",
-      yearCollected: "",
-      keywords: "",
-      requiresEthicsApproval: true,
-      hasPublications: false,
-    });
+    try {
+      // Prepare dataset data for API
+      const datasetData = {
+        name: formData.name,
+        description: formData.description,
+        institution: formData.institution,
+        data_type: formData.dataType,
+        access_type: formData.accessType,
+        collaboration_type: formData.collaborationType,
+        contact_email: formData.contactEmail,
+        sample_size: formData.sampleSize,
+        year_collected: formData.yearCollected,
+        keywords: formData.keywords,
+        requires_ethics_approval: formData.requiresEthicsApproval,
+        has_publications: formData.hasPublications,
+      };
+
+      // Send request to backend API
+      const response = await fetch("http://localhost:8000/datasets/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(datasetData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create dataset");
+      }
+
+      const createdDataset = await response.json();
+
+      // Call the onSubmit prop
+      onSubmit?.(createdDataset);
+
+      // Reset form after submission
+      setFormData({
+        name: "",
+        description: "",
+        institution: "",
+        dataType: "mixed",
+        accessType: "collaboration",
+        collaborationType: "academic",
+        contactEmail: "",
+        sampleSize: "",
+        yearCollected: "",
+        keywords: "",
+        requiresEthicsApproval: true,
+        hasPublications: false,
+      });
+    } catch (error) {
+      console.error("Error creating dataset:", error);
+      // Here you would typically show an error message to the user
+    }
   };
 
   return (

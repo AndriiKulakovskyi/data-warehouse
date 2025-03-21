@@ -1,30 +1,44 @@
-# React + TypeScript + Vite
+# Clinical Dataset Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A secure, searchable data warehouse application that enables researchers and clinicians to discover, request access to, and share multimodal datasets related to clinical psychiatry.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Clean, filterable dataset catalog with cards showing dataset previews, metadata, and availability status
+- Detailed dataset view page with tabs for description, sample data visualization, publication history, and citation information
+- Secure request workflow with customizable approval process and data usage agreements
+- Admin dashboard for dataset owners to manage access requests and monitor usage analytics
+- Support for various data types (imaging, questionnaires, clinical notes) with appropriate preview capabilities
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- `frontend/`: React frontend application
+  - Built with Vite, React, TypeScript, and Tailwind CSS
+  - Uses shadcn/ui components
+  - Responsive design for all screen sizes
 
-- Configure the top-level `parserOptions` property like this:
+- `backend/`: FastAPI backend application
+  - RESTful API for user management, dataset metadata, and access requests
+  - JWT authentication for secure access
+  - File-based JSON database (for development)
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Getting Started
+
+### Prerequisites
+
+- Docker and Docker Compose
+- Node.js 16+ (for local development)
+- Python 3.9+ (for local development)
+
+### Running with Docker
+
+1. Clone the repository
+2. Start the application:
+
+```bash
+docker-compose up
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+The application will be available at:
+- Frontend: http://localhost:5173
+-

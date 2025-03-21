@@ -72,17 +72,38 @@ const AccessRequestForm = ({
     },
   });
 
-  const handleSubmit = (values: FormValues) => {
-    // Add the datasetId to the form values and submit the request
-    console.log(`Submitting access request for dataset ${datasetId}:`, values);
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      // Prepare request data for API
+      const requestData = {
+        dataset_id: datasetId,
+        purpose: values.purpose,
+        project_description: values.projectDescription,
+        agree_to_dua: values.agreeToDua,
+        agree_to_terms: values.agreeToTerms,
+      };
 
-    // Here you would typically send the request to your backend API
-    // For example: await fetch('/api/access-requests', { method: 'POST', body: JSON.stringify({...values, datasetId}) })
+      // Send request to backend API
+      const response = await fetch("http://localhost:8000/access-requests/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(requestData),
+      });
 
-    // Show success message or handle errors
-    // For now, we'll just call the onSubmit prop and close the dialog
-    onSubmit({ ...values, datasetId });
-    onClose();
+      if (!response.ok) {
+        throw new Error("Failed to submit access request");
+      }
+
+      // Call the onSubmit prop and close the dialog
+      onSubmit({ ...values, datasetId });
+      onClose();
+    } catch (error) {
+      console.error("Error submitting access request:", error);
+      // Here you would typically show an error message to the user
+    }
   };
 
   return (

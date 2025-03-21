@@ -1,16 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { authAPI } from "@/api";
 
 interface User {
   id: string;
   username: string;
   email: string;
-  isAdmin: boolean;
-  avatarUrl?: string;
+  full_name: string;
+  institution: string;
+  is_admin: boolean;
+  is_active: boolean;
+  created_at: string;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   signup: (userData: any) => Promise<void>;
@@ -19,6 +25,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
+  isLoading: true,
   login: async () => {},
   logout: () => {},
   signup: async () => {},
@@ -31,69 +38,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Check for existing session on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const checkAuth = async () => {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
+        // Check if we have a token
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Verify token by getting current user
+        const userData = await authAPI.getCurrentUser();
+        setUser(userData);
         setIsAuthenticated(true);
       } catch (error) {
-        console.error("Failed to parse stored user data", error);
-        localStorage.removeItem("user");
+        console.error("Auth check failed:", error);
+        // Clear invalid token
+        localStorage.removeItem("token");
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    // In a real app, you would authenticate with a backend here
-    // For demo purposes, we'll simulate a successful login with mock data
-    const mockUser = {
-      id: "123",
-      username: "Dr. John Smith",
-      email: email,
-      isAdmin: email.includes("admin"),
-      avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
     };
 
-    // Store user in localStorage for persistence
-    localStorage.setItem("user", JSON.stringify(mockUser));
+    checkAuth();
+  }, []);
 
-    setUser(mockUser);
-    setIsAuthenticated(true);
+  const login = async (username: string, password: string) => {
+    try {
+      // Get token
+      await authAPI.login(username, password);
+
+      // Get user data
+      const userData = await authAPI.getCurrentUser();
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
   };
 
   const signup = async (userData: any) => {
-    // In a real app, you would register with a backend here
-    // For demo purposes, we'll simulate a successful registration
-    const newUser = {
-      id: "456",
-      username: userData.fullName,
-      email: userData.email,
-      isAdmin: false,
-      avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.email}`,
-    };
+    try {
+      // Register user
+      await authAPI.signup(userData);
 
-    // Store user in localStorage for persistence
-    localStorage.setItem("user", JSON.stringify(newUser));
-
-    setUser(newUser);
-    setIsAuthenticated(true);
+      // Log in with new credentials
+      await login(userData.username, userData.password);
+    } catch (error) {
+      console.error("Signup failed:", error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    // Remove user from localStorage
-    localStorage.removeItem("user");
-
+    authAPI.logout();
     setUser(null);
     setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, signup }}
+      value={{ user, isAuthenticated, isLoading, login, logout, signup }}
     >
       {children}
     </AuthContext.Provider>

@@ -60,12 +60,34 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   const onSubmit = async (values: FormValues) => {
     console.log("Sign up form submitted:", values);
     try {
-      await signup(values);
+      // Prepare user data for API
+      const userData = {
+        username: values.email,
+        email: values.email,
+        password: values.password,
+        full_name: values.fullName,
+        institution: values.institution,
+      };
+
+      await signup(userData);
       navigate("/");
       onSuccess(values);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration failed:", error);
-      // Handle registration error
+      // Show error message to user
+      if (
+        error.response?.data?.detail?.includes("Username already registered")
+      ) {
+        form.setError("email", {
+          type: "manual",
+          message: "This email is already registered",
+        });
+      } else {
+        form.setError("root", {
+          type: "manual",
+          message: "Registration failed. Please try again.",
+        });
+      }
     }
   };
 

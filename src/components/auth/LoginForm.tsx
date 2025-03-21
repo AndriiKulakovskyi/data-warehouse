@@ -52,7 +52,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
       onSuccess(values.email, values.password);
     } catch (error) {
       console.error("Login failed:", error);
-      // Handle login error
+      // Show error message to user
+      form.setError("email", {
+        type: "manual",
+        message: "Invalid email or password",
+      });
     }
   };
 
